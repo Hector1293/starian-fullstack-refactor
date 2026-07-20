@@ -78,7 +78,15 @@ php artisan route:list
 
 ## Frontend
 
-O frontend Angular continua usando `http://localhost:8000/tarefas`. Nenhuma alteração no frontend foi necessária nesta etapa.
+O frontend Angular continua usando `http://localhost:8000/tarefas`. A comunicação com a API foi isolada em `TaskService`, e o componente principal ficou responsável apenas pelo estado da tela e pelas interações do usuário.
+
+Arquivos principais desta etapa:
+
+- `frontend/src/app/task.ts`: define a interface `Task` e o tipo usado para nova tarefa.
+- `frontend/src/app/task.service.ts`: concentra as chamadas `GET`, `POST` e `DELETE` para `/tarefas`.
+- `frontend/src/app/app.component.ts`: consome o serviço e mantém o mesmo comportamento visual e funcional.
+
+A URL da API ainda está hardcoded em `frontend/src/app/task.service.ts`. A externalização para environments ficou para uma etapa posterior.
 
 ## Observações
 

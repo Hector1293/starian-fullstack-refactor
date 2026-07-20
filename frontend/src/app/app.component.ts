@@ -2,29 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+import { Task, NewTask } from './task';
+import { TaskService } from './task.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, HttpClientModule],
+  imports: [RouterOutlet, CommonModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'Todo List';
-  todos: any[] = [];
-  newTodo: any = { title: '', completed: false };
-  apiUrl = 'http://localhost:8000/tarefas';
+  todos: Task[] = [];
+  newTodo: NewTask = { title: '', completed: false };
 
-  constructor(private http: HttpClient) {}
+  constructor(private taskService: TaskService) {}
 
-  ngOnInit() {
-    this.http.get(this.apiUrl).subscribe(
-      (data: any) => {
+  ngOnInit(): void {
+    this.taskService.getTasks().subscribe(
+      (data) => {
         this.todos = data;
       },
-      (erro) => {
+      (erro: unknown) => {
         console.error('Erro ao carregar tarefas:', erro);
         this.todos = [
           { id: 1, title: 'Tarefa offline 1', completed: false },
@@ -34,20 +35,18 @@ export class AppComponent implements OnInit {
     );
   }
 
-  addTodo() {
+  addTodo(): void {
     if (!this.newTodo.title.trim()) return;
-    
-    this.http.post(this.apiUrl, {
-      title: this.newTodo.title
-    }).subscribe(
-      (response: any) => {
+
+    this.taskService.createTask(this.newTodo.title).subscribe(
+      (response) => {
         this.todos.push(response);
-        
+
         this.newTodo = { title: '', completed: false };
       },
-      (erro) => {
+      (erro: unknown) => {
         console.error('Erro ao adicionar tarefa:', erro);
-        const fakeTodo = {
+        const fakeTodo: Task = {
           id: Math.floor(Math.random() * 1000),
           title: this.newTodo.title,
           completed: false
@@ -58,12 +57,12 @@ export class AppComponent implements OnInit {
     );
   }
 
-  removeTodo(id: number) {
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe(
+  removeTodo(id: number): void {
+    this.taskService.deleteTask(id).subscribe(
       () => {
         this.todos = this.todos.filter(todo => todo.id !== id);
       },
-      (erro) => {
+      (erro: unknown) => {
         console.error('Erro ao remover tarefa:', erro);
         this.todos = this.todos.filter(todo => todo.id !== id);
       }
