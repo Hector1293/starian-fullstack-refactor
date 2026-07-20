@@ -93,6 +93,8 @@ A URL base da API fica configurada em:
 
 O `TaskService` usa `environment.apiBaseUrl` e mantém o endpoint `/tarefas`.
 
+O tratamento de erros fica centralizado no componente. Em falhas ao listar, criar ou remover tarefas, a interface exibe uma mensagem simples e preserva o estado local anterior, sem criar dados fictícios nem remover itens apenas na tela.
+
 ## Observações
 
 - O arquivo `storage/tarefas.json` não é mais usado pela API.

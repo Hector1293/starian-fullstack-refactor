@@ -16,6 +16,10 @@
     </button>
   </div>
 
+  <div *ngIf="errorMessage" style="margin-bottom: 20px; color: #f44336;">
+    {{ errorMessage }}
+  </div>
+
   <div>
     <h2>Tarefas</h2>
     
