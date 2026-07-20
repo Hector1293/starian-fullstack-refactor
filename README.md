@@ -86,7 +86,12 @@ Arquivos principais desta etapa:
 - `frontend/src/app/task.service.ts`: concentra as chamadas `GET`, `POST` e `DELETE` para `/tarefas`.
 - `frontend/src/app/app.component.ts`: consome o serviço e mantém o mesmo comportamento visual e funcional.
 
-A URL da API ainda está hardcoded em `frontend/src/app/task.service.ts`. A externalização para environments ficou para uma etapa posterior.
+A URL base da API fica configurada em:
+
+- `frontend/src/environments/environment.ts`
+- `frontend/src/environments/environment.development.ts`
+
+O `TaskService` usa `environment.apiBaseUrl` e mantém o endpoint `/tarefas`.
 
 ## Observações
 
