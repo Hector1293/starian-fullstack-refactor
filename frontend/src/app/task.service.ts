@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { Task } from './task';
+import { CreateTaskPayload, Task } from './task';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private readonly apiUrl = `${environment.apiBaseUrl}/tarefas`;
+  private readonly apiUrl: string = `${environment.apiBaseUrl}/tarefas`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +18,9 @@ export class TaskService {
   }
 
   createTask(title: string): Observable<Task> {
-    return this.http.post<Task>(this.apiUrl, { title });
+    const payload: CreateTaskPayload = { title };
+
+    return this.http.post<Task>(this.apiUrl, payload);
   }
 
   deleteTask(id: number): Observable<void> {

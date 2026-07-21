@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { Task, NewTask } from './task';
 import { TaskService } from './task.service';
@@ -14,20 +15,20 @@ import { TaskService } from './task.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  title = 'Todo List';
+  title: string = 'Todo List';
   todos: Task[] = [];
   newTodo: NewTask = { title: '', completed: false };
-  errorMessage = '';
+  errorMessage: string = '';
 
   constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
     this.taskService.getTasks().subscribe(
-      (data) => {
+      (data: Task[]) => {
         this.todos = data;
         this.errorMessage = '';
       },
-      (erro: unknown) => {
+      (erro: HttpErrorResponse) => {
         console.error('Erro ao carregar tarefas:', erro);
         this.errorMessage = 'Nao foi possivel carregar as tarefas.';
       }
@@ -38,13 +39,13 @@ export class AppComponent implements OnInit {
     if (!this.newTodo.title.trim()) return;
 
     this.taskService.createTask(this.newTodo.title).subscribe(
-      (response) => {
+      (response: Task) => {
         this.todos.push(response);
         this.errorMessage = '';
 
         this.newTodo = { title: '', completed: false };
       },
-      (erro: unknown) => {
+      (erro: HttpErrorResponse) => {
         console.error('Erro ao adicionar tarefa:', erro);
         this.errorMessage = 'Nao foi possivel adicionar a tarefa.';
       }
@@ -57,7 +58,7 @@ export class AppComponent implements OnInit {
         this.todos = this.todos.filter(todo => todo.id !== id);
         this.errorMessage = '';
       },
-      (erro: unknown) => {
+      (erro: HttpErrorResponse) => {
         console.error('Erro ao remover tarefa:', erro);
         this.errorMessage = 'Nao foi possivel remover a tarefa.';
       }
