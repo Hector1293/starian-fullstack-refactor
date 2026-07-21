@@ -39,7 +39,7 @@ composer install
 cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite
-php artisan migrate
+php artisan migrate --seed
 php artisan serve
 ```
 
@@ -72,11 +72,12 @@ Com as dependências instaladas:
 
 ```bash
 php artisan migrate
+php artisan db:seed
 php artisan test
 php artisan route:list
 ```
 
-Os testes automatizados do backend usam SQLite em memória durante a execução e cobrem os principais fluxos da API de tarefas: listar, criar tarefa válida, rejeitar `title` ausente, rejeitar `title` acima de 255 caracteres, remover tarefa existente e retornar `404` ao remover tarefa inexistente.
+Os testes automatizados do backend usam SQLite em memória durante a execução e cobrem os principais fluxos da API de tarefas: listar, criar tarefa válida, rejeitar `title` ausente, rejeitar `title` acima de 255 caracteres, remover tarefa existente, retornar `404` ao remover tarefa inexistente e preservar os dados iniciais via seeder sem duplicação.
 
 ## Frontend
 
@@ -104,6 +105,6 @@ Os estilos do componente foram movidos do template para `frontend/src/app/app.co
 ## Observações
 
 - O arquivo `storage/tarefas.json` não é mais usado pela API.
-- Dados antigos do JSON não são migrados automaticamente para SQLite.
+- As três tarefas iniciais do JSON original são recriadas pelo seeder, preservando `Tarefa 2` com `completed = true`.
 - As respostas da API agora vêm do Eloquent e incluem `created_at` e `updated_at`.
 - O modelo e a tabela seguem a convenção do Laravel (Task → tasks), enquanto os endpoints permaneceram em português (/tarefas) para manter compatibilidade com o frontend existente e evitar mudanças desnecessárias na API.
