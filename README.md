@@ -76,6 +76,8 @@ php artisan test
 php artisan route:list
 ```
 
+Os testes automatizados do backend usam SQLite em memória durante a execução e cobrem os principais fluxos da API de tarefas: listar, criar tarefa válida, rejeitar `title` ausente, rejeitar `title` acima de 255 caracteres, remover tarefa existente e retornar `404` ao remover tarefa inexistente.
+
 ## Frontend
 
 O frontend Angular continua usando `http://localhost:8000/tarefas`. A comunicação com a API foi isolada em `TaskService`, e o componente principal ficou responsável apenas pelo estado da tela e pelas interações do usuário.
