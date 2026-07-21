@@ -1,0 +1,97 @@
+.todo-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 760px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.todo-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.todo-input {
+  box-sizing: border-box;
+  width: 300px;
+  max-width: 100%;
+  padding: 8px;
+}
+
+.add-button,
+.remove-button {
+  border: 0;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+}
+
+.remove-button {
+  padding: 5px 10px;
+  background-color: #f44336;
+}
+
+.error-message {
+  margin-bottom: 20px;
+  color: #f44336;
+}
+
+.empty-message {
+  color: gray;
+}
+
+.todo-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+}
+
+.todo-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.todo-title--completed {
+  text-decoration: line-through;
+}
+
+@media (max-width: 480px) {
+  .todo-page {
+    padding: 16px;
+  }
+
+  .todo-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .todo-input,
+  .add-button {
+    width: 100%;
+  }
+
+  .todo-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .remove-button {
+    align-self: flex-end;
+  }
+}

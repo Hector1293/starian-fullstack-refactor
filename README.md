@@ -97,6 +97,8 @@ O tratamento de erros fica centralizado no componente. Em falhas ao listar, cria
 
 A tipagem do frontend usa a interface `Task` para dados de tarefas, tipos específicos para payloads da API, `Observable<T>` no serviço e `HttpErrorResponse` nos fluxos de erro do componente.
 
+Os estilos do componente foram movidos do template para `frontend/src/app/app.component.scss`. A interface mantém a identidade visual original e ganhou ajustes responsivos para evitar rolagem horizontal em telas menores.
+
 ## Observações
 
 - O arquivo `storage/tarefas.json` não é mais usado pela API.

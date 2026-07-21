@@ -1,44 +1,44 @@
-<div style="padding: 20px; font-family: Arial;">
+<div class="todo-page">
   <h1>{{ title }}</h1>
 
-  <div style="margin-bottom: 20px;">
+  <div class="todo-form">
     <input 
       type="text" 
       [(ngModel)]="newTodo.title" 
       placeholder="Digite uma nova tarefa"
-      style="padding: 8px; width: 300px;"
+      class="todo-input"
     />
     <button 
       (click)="addTodo()" 
-      style="padding: 8px 16px; margin-left: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;"
+      class="add-button"
     >
       Adicionar
     </button>
   </div>
 
-  <div *ngIf="errorMessage" style="margin-bottom: 20px; color: #f44336;">
+  <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>
 
-  <div>
+  <div class="todo-section">
     <h2>Tarefas</h2>
     
-    <div *ngIf="todos.length === 0" style="color: gray;">
+    <div *ngIf="todos.length === 0" class="empty-message">
       Nenhuma tarefa encontrada.
     </div>
     
-    <ul style="list-style-type: none; padding: 0;">
+    <ul class="todo-list">
       <li 
         *ngFor="let todo of todos" 
-        style="padding: 10px; margin-bottom: 5px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;"
+        class="todo-item"
       >
-        <span [style.text-decoration]="todo.completed ? 'line-through' : 'none'">
+        <span class="todo-title" [class.todo-title--completed]="todo.completed">
           {{ todo.title }}
         </span>
         
         <button 
           (click)="removeTodo(todo.id)" 
-          style="background-color: #f44336; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+          class="remove-button"
         >
           Remover
         </button>
