@@ -1,0 +1,21 @@
+# Local environment files
+/.env
+/.env.*
+!/.env.example
+
+# OS and editor files
+/.DS_Store
+/Thumbs.db
+/.fleet/
+/.idea/
+/.nova/
+/.vscode/
+/.zed/
+
+# Local logs, temp files, and archives
+/*.log
+/*.tmp
+/*.bak
+/*.zip
+/*.tar
+/*.tgz
