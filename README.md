@@ -27,48 +27,131 @@ Avaliar sua capacidade de:
 
 ---
 
+# Principais problemas identificados
+
+### Backend
+
+- Persistência de dados em arquivo JSON.
+- Lógica de negócio implementada diretamente nas rotas.
+- Ausência de validação centralizada das requisições.
+- Ausência de testes automatizados.
+- Dados iniciais dependentes do arquivo JSON.
+
+### Frontend
+
+- Comunicação HTTP concentrada no componente principal.
+- URL da API hardcoded.
+- Contratos da API parcialmente tipados.
+- Tratamento de erros inconsistente.
+- Estilos inline.
+- Layout pouco responsivo.
+
+---
+
+# Refatorações realizadas
+
 ## Backend
 
-O backend usa Laravel 11, PHP 8.2 e SQLite. A persistência das tarefas foi migrada do arquivo `storage/tarefas.json` para Eloquent, usando a tabela `tasks`.
+- Migração da persistência de JSON para SQLite utilizando Eloquent.
+- Criação do Model `Task`.
+- Criação da migration `tasks`.
+- Criação do `TaskController`.
+- Criação do `StoreTaskRequest`.
+- Criação do `TaskSeeder`.
+- Inclusão de testes automatizados para os principais fluxos da API.
+- Correção do carregamento das rotas da API no Laravel 11.
+- Ajustes na configuração do Docker para executar o código atualizado.
 
-### Configuração local
+## Frontend
+
+- Criação do `TaskService`.
+- Separação entre camada de apresentação e acesso à API.
+- Externalização da URL da API utilizando environments.
+- Reforço da tipagem da aplicação.
+- Correção do tratamento de erros.
+- Organização dos estilos em arquivo SCSS.
+- Melhorias de responsividade.
+
+---
+
+# Decisões técnicas
+
+Durante a refatoração foram adotadas algumas decisões para preservar o comportamento original da aplicação:
+
+- O endpoint `/tarefas` foi mantido para evitar alterações no contrato da API.
+- Foi utilizada a arquitetura padrão do Laravel com Eloquent.
+- Não foram adicionadas camadas Service/Repository por não agregarem valor ao escopo atual do CRUD.
+- O frontend passou a consumir a URL da API através dos environments.
+- O arquivo `storage/tarefas.json` foi removido, sendo substituído por um Seeder.
+- As três tarefas iniciais foram preservadas, incluindo `Tarefa 2` com `completed = true`.
+
+---
+
+# Backend
+
+O backend utiliza Laravel 11, PHP 8.2 e SQLite.
+
+## Configuração
 
 ```bash
 cd backend
+
 composer install
+
 cp .env.example .env
+
 php artisan key:generate
-touch database/database.sqlite
-php artisan migrate --seed
-php artisan serve
 ```
 
-No Windows PowerShell, caso o arquivo SQLite ainda não exista:
+Criar o banco SQLite:
+
+```bash
+touch database/database.sqlite
+```
+
+No Windows PowerShell:
 
 ```powershell
 New-Item -ItemType File -Path database\database.sqlite -Force
 ```
 
-### Endpoints
+Executar migrations e seed:
 
-Com o servidor Laravel em `http://localhost:8000`, os endpoints consumidos pelo frontend são:
+```bash
+php artisan migrate --seed
+```
 
-| Método | URL | Descrição |
-| --- | --- | --- |
-| GET | `http://localhost:8000/tarefas` | Lista todas as tarefas |
-| POST | `http://localhost:8000/tarefas` | Cria uma tarefa |
-| DELETE | `http://localhost:8000/tarefas/{id}` | Exclui uma tarefa |
+Iniciar servidor:
 
-Regras atuais:
+```bash
+php artisan serve
+```
 
-- `POST /tarefas` valida `title` como obrigatório, string e máximo de 255 caracteres.
-- `POST /tarefas` retorna o recurso criado com status `201`.
-- `DELETE /tarefas/{id}` retorna `204` ao excluir com sucesso.
-- `DELETE /tarefas/{id}` retorna `404` quando a tarefa não existe.
+---
 
-### Validação
+## Endpoints
 
-Com as dependências instaladas:
+| Método | Endpoint | Descrição |
+|---------|----------|-----------|
+| GET | `/tarefas` | Lista tarefas |
+| POST | `/tarefas` | Cria tarefa |
+| DELETE | `/tarefas/{id}` | Remove tarefa |
+
+---
+
+## Regras da API
+
+- `title` obrigatório.
+- Máximo de 255 caracteres.
+- POST retorna **201 Created**.
+- DELETE retorna **204 No Content**.
+- DELETE retorna **404** quando a tarefa não existe.
+
+---
+
+## Testes
+
+Executar:
 
 ```bash
 php artisan migrate
@@ -77,34 +160,46 @@ php artisan test
 php artisan route:list
 ```
 
-Os testes automatizados do backend usam SQLite em memória durante a execução e cobrem os principais fluxos da API de tarefas: listar, criar tarefa válida, rejeitar `title` ausente, rejeitar `title` acima de 255 caracteres, remover tarefa existente, retornar `404` ao remover tarefa inexistente e preservar os dados iniciais via seeder sem duplicação.
+Os testes utilizam SQLite em memória e cobrem:
 
-## Frontend
+- listagem;
+- criação;
+- validação;
+- limite de caracteres;
+- remoção;
+- erro 404;
+- funcionamento do Seeder.
 
-O frontend Angular continua usando `http://localhost:8000/tarefas`. A comunicação com a API foi isolada em `TaskService`, e o componente principal ficou responsável apenas pelo estado da tela e pelas interações do usuário.
+---
 
-Arquivos principais desta etapa:
+# Frontend
 
-- `frontend/src/app/task.ts`: define a interface `Task` e o tipo usado para nova tarefa.
-- `frontend/src/app/task.service.ts`: concentra as chamadas `GET`, `POST` e `DELETE` para `/tarefas`.
-- `frontend/src/app/app.component.ts`: consome o serviço e mantém o mesmo comportamento visual e funcional.
+O frontend Angular consome a API através do `TaskService`.
 
-A URL base da API fica configurada em:
+Principais arquivos:
 
-- `frontend/src/environments/environment.ts`
-- `frontend/src/environments/environment.development.ts`
+- `task.ts`
+- `task.service.ts`
+- `app.component.ts`
 
-O `TaskService` usa `environment.apiBaseUrl` e mantém o endpoint `/tarefas`.
+A URL da API é configurada em:
 
-O tratamento de erros fica centralizado no componente. Em falhas ao listar, criar ou remover tarefas, a interface exibe uma mensagem simples e preserva o estado local anterior, sem criar dados fictícios nem remover itens apenas na tela.
+```
+frontend/src/environments/environment.ts
+frontend/src/environments/environment.development.ts
+```
 
-A tipagem do frontend usa a interface `Task` para dados de tarefas, tipos específicos para payloads da API, `Observable<T>` no serviço e `HttpErrorResponse` nos fluxos de erro do componente.
+Os estilos foram movidos para `app.component.scss`, mantendo a identidade visual original e adicionando responsividade.
 
-Os estilos do componente foram movidos do template para `frontend/src/app/app.component.scss`. A interface mantém a identidade visual original e ganhou ajustes responsivos para evitar rolagem horizontal em telas menores.
+O tratamento de erros foi ajustado para preservar o estado da interface quando ocorrerem falhas na comunicação com o backend.
 
-## Observações
+---
 
-- O arquivo `storage/tarefas.json` não é mais usado pela API.
-- As três tarefas iniciais do JSON original são recriadas pelo seeder, preservando `Tarefa 2` com `completed = true`.
-- As respostas da API agora vêm do Eloquent e incluem `created_at` e `updated_at`.
+# Observações
+
+- O arquivo `storage/tarefas.json` deixou de ser utilizado.
+- Os dados iniciais são recriados automaticamente pelo `TaskSeeder`.
+- O Seeder utiliza `updateOrCreate`, permitindo múltiplas execuções sem duplicação de registros.
+- Novas tarefas continuam sendo criadas com `completed = false`.
+- As respostas da API são retornadas pelo Eloquent incluindo `created_at` e `updated_at`.
 - O modelo e a tabela seguem a convenção do Laravel (Task → tasks), enquanto os endpoints permaneceram em português (/tarefas) para manter compatibilidade com o frontend existente e evitar mudanças desnecessárias na API.
