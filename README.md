@@ -65,6 +65,7 @@ Avaliar sua capacidade de:
 - Correção do carregamento das rotas da API no Laravel.
 - Ajuste do CORS para permitir requisições `PATCH`.
 - Ajustes na configuração do Docker para executar o código atualizado.
+- Remoção da página web padrão e dos assets frontend scaffold do backend, mantendo o Laravel focado na API.
 
 ## Frontend
 
@@ -102,7 +103,6 @@ Durante a refatoração foram adotadas algumas decisões para preservar o compor
 - Não foram adicionadas camadas Service/Repository por não agregarem valor ao escopo atual do CRUD.
 - O frontend passou a consumir a URL da API através dos environments.
 - A tela foi componentizada sem alterar comportamento: `AppComponent` mantém o estado e as chamadas ao `TaskService`, enquanto os componentes filhos cuidam apenas da apresentação e emissão de eventos.
-- O arquivo `storage/tarefas.json` foi removido, sendo substituído por um Seeder.
 - As três tarefas iniciais foram preservadas, incluindo `Tarefa 2` com `completed = true`.
 - A interface só altera o status visual de uma tarefa após confirmação da API.
 
@@ -190,6 +190,9 @@ docker compose exec laravel php artisan route:list
 - Criar tarefas.
 - Excluir tarefas.
 - Concluir e reabrir tarefas.
+- Executar testes automatizados do backend.
+- Executar testes unitários do frontend.
+- Validar o projeto com integração contínua via GitHub Actions.
 
 ---
 
@@ -219,13 +222,10 @@ docker compose exec laravel php artisan route:list
 
 ## Testes
 
-Executar:
+Executar testes automatizados do backend:
 
 ```bash
-php artisan migrate
-php artisan db:seed
 php artisan test
-php artisan route:list
 ```
 
 Os testes utilizam SQLite em memória e cobrem:
@@ -366,7 +366,6 @@ docker-compose.yml
 
 # Observações
 
-- O arquivo `storage/tarefas.json` deixou de ser utilizado.
 - Os dados iniciais são recriados automaticamente pelo `TaskSeeder`.
 - O Seeder utiliza `updateOrCreate`, permitindo múltiplas execuções sem duplicação de registros.
 - Novas tarefas continuam sendo criadas com `completed = false`.
