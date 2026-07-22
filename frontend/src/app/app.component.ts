@@ -1,23 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { Task, NewTask } from './task';
+import { Task } from './task';
+import { TaskFormComponent } from './task-form.component';
+import { TaskListComponent } from './task-list.component';
 import { TaskService } from './task.service';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, FormsModule],
+    imports: [RouterOutlet, TaskFormComponent, TaskListComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title: string = 'Todo List';
   todos: Task[] = [];
-  newTodo: NewTask = { title: '', completed: false };
   errorMessage: string = '';
+  taskFormResetKey: number = 0;
 
   constructor(private taskService: TaskService) {}
 
@@ -34,15 +35,12 @@ export class AppComponent implements OnInit {
     );
   }
 
-  addTodo(): void {
-    if (!this.newTodo.title.trim()) return;
-
-    this.taskService.createTask(this.newTodo.title).subscribe(
+  addTodo(title: string): void {
+    this.taskService.createTask(title).subscribe(
       (response: Task) => {
         this.todos.push(response);
         this.errorMessage = '';
-
-        this.newTodo = { title: '', completed: false };
+        this.taskFormResetKey += 1;
       },
       (erro: HttpErrorResponse) => {
         console.error('Erro ao adicionar tarefa:', erro);
@@ -64,9 +62,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  toggleCompleted(task: Task, event: MouseEvent): void {
-    event.preventDefault();
-
+  toggleCompleted(task: Task): void {
     this.taskService.updateTaskCompleted(task.id, !task.completed).subscribe(
       (updatedTask: Task) => {
         this.todos = this.todos.map(todo => todo.id === updatedTask.id ? updatedTask : todo);

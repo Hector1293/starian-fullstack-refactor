@@ -1,0 +1,54 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+}
+
+.todo-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.todo-checkbox {
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.todo-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.todo-title--completed {
+  text-decoration: line-through;
+}
+
+.remove-button {
+  padding: 5px 10px;
+  border: 0;
+  color: white;
+  background-color: #f44336;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  :host {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .todo-content {
+    align-items: flex-start;
+  }
+
+  .remove-button {
+    align-self: flex-end;
+  }
+}

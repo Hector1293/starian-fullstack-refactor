@@ -78,6 +78,7 @@ Avaliar sua capacidade de:
 - Melhorias de responsividade.
 - Inclusão de checkbox para concluir e reabrir tarefas.
 - Atualização do `TaskService` para utilizar `PATCH /tasks/{task}`.
+- Componentização da interface em `TaskFormComponent`, `TaskListComponent` e `TaskItemComponent`.
 
 ## Docker
 
@@ -95,6 +96,7 @@ Durante a refatoração foram adotadas algumas decisões para preservar o compor
 - Foi utilizada a arquitetura padrão do Laravel com Eloquent.
 - Não foram adicionadas camadas Service/Repository por não agregarem valor ao escopo atual do CRUD.
 - O frontend passou a consumir a URL da API através dos environments.
+- A tela foi componentizada sem alterar comportamento: `AppComponent` mantém o estado e as chamadas ao `TaskService`, enquanto os componentes filhos cuidam apenas da apresentação e emissão de eventos.
 - O arquivo `storage/tarefas.json` foi removido, sendo substituído por um Seeder.
 - As três tarefas iniciais foram preservadas, incluindo `Tarefa 2` com `completed = true`.
 - A interface só altera o status visual de uma tarefa após confirmação da API.
@@ -244,6 +246,25 @@ Principais arquivos:
 - `task.ts`
 - `task.service.ts`
 - `app.component.ts`
+- `task-form.component.ts`
+- `task-list.component.ts`
+- `task-item.component.ts`
+
+Organização dos componentes:
+
+```text
+AppComponent
+├── TaskFormComponent
+├── TaskListComponent
+└── TaskItemComponent
+```
+
+Responsabilidades:
+
+- `AppComponent`: estado da aplicação, mensagens de erro e chamadas ao `TaskService`.
+- `TaskFormComponent`: formulário de criação e emissão do evento de nova tarefa.
+- `TaskListComponent`: recebimento e renderização da coleção de tarefas.
+- `TaskItemComponent`: exibição de uma tarefa, checkbox de conclusão, botão de exclusão e emissão de eventos.
 
 A URL da API é configurada em:
 
@@ -290,6 +311,9 @@ backend/
 
 frontend/
   src/app/app.component.*
+  src/app/task-form.component.*
+  src/app/task-list.component.*
+  src/app/task-item.component.*
   src/app/task.ts
   src/app/task.service.ts
   src/environments/

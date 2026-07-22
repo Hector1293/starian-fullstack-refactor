@@ -1,0 +1,16 @@
+@if (tasks.length === 0) {
+  <div class="empty-message">
+    Nenhuma tarefa encontrada.
+  </div>
+}
+
+<ul class="todo-list">
+  @for (task of tasks; track task.id) {
+    <li
+      app-task-item
+      [task]="task"
+      (removeTask)="removeTask.emit($event)"
+      (toggleTask)="toggleTask.emit($event)"
+      ></li>
+  }
+</ul>

@@ -1,0 +1,14 @@
+<div class="todo-form">
+  <input
+    type="text"
+    [(ngModel)]="newTodo.title"
+    placeholder="Digite uma nova tarefa"
+    class="todo-input"
+    />
+  <button
+    (click)="submit()"
+    class="add-button"
+    >
+    Adicionar
+  </button>
+</div>

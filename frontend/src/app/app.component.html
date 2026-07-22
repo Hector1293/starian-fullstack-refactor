@@ -1,20 +1,10 @@
 <div class="todo-page">
   <h1>{{ title }}</h1>
 
-  <div class="todo-form">
-    <input
-      type="text"
-      [(ngModel)]="newTodo.title"
-      placeholder="Digite uma nova tarefa"
-      class="todo-input"
-      />
-      <button
-        (click)="addTodo()"
-        class="add-button"
-        >
-        Adicionar
-      </button>
-    </div>
+  <app-task-form
+    [resetKey]="taskFormResetKey"
+    (createTask)="addTodo($event)"
+    />
 
     @if (errorMessage) {
       <div class="error-message">
@@ -25,37 +15,11 @@
     <div class="todo-section">
       <h2>Tarefas</h2>
 
-      @if (todos.length === 0) {
-        <div class="empty-message">
-          Nenhuma tarefa encontrada.
-        </div>
-      }
-
-      <ul class="todo-list">
-        @for (todo of todos; track todo) {
-          <li
-            class="todo-item"
-            >
-            <label class="todo-content">
-              <input
-                type="checkbox"
-                class="todo-checkbox"
-                [checked]="todo.completed"
-                (click)="toggleCompleted(todo, $event)"
-                />
-              <span class="todo-title" [class.todo-title--completed]="todo.completed">
-                {{ todo.title }}
-              </span>
-            </label>
-            <button
-              (click)="removeTodo(todo.id)"
-              class="remove-button"
-              >
-              Remover
-            </button>
-          </li>
-        }
-      </ul>
+      <app-task-list
+        [tasks]="todos"
+        (removeTask)="removeTodo($event)"
+        (toggleTask)="toggleCompleted($event)"
+        />
     </div>
   </div>
 

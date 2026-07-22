@@ -1,0 +1,17 @@
+<label class="todo-content">
+  <input
+    type="checkbox"
+    class="todo-checkbox"
+    [checked]="task.completed"
+    (click)="requestToggle($event)"
+    />
+  <span class="todo-title" [class.todo-title--completed]="task.completed">
+    {{ task.title }}
+  </span>
+</label>
+<button
+  (click)="removeTask.emit(task.id)"
+  class="remove-button"
+    >
+  Remover
+</button>
