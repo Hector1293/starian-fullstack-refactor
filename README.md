@@ -53,17 +53,22 @@ Avaliar sua capacidade de:
 ## Backend
 
 - Migração da persistência de JSON para SQLite utilizando Eloquent.
+- Atualização do Laravel para a versão 12.
 - Criação do Model `Task`.
 - Criação da migration `tasks`.
 - Criação do `TaskController`.
 - Criação do `StoreTaskRequest`.
+- Criação do `UpdateTaskRequest`.
 - Criação do `TaskSeeder`.
 - Inclusão de testes automatizados para os principais fluxos da API.
-- Correção do carregamento das rotas da API no Laravel 11.
+- Inclusão do endpoint `PATCH /tasks/{task}` para concluir e reabrir tarefas.
+- Correção do carregamento das rotas da API no Laravel.
+- Ajuste do CORS para permitir requisições `PATCH`.
 - Ajustes na configuração do Docker para executar o código atualizado.
 
 ## Frontend
 
+- Atualização do Angular para a versão 21.
 - Criação do `TaskService`.
 - Separação entre camada de apresentação e acesso à API.
 - Externalização da URL da API utilizando environments.
@@ -71,6 +76,13 @@ Avaliar sua capacidade de:
 - Correção do tratamento de erros.
 - Organização dos estilos em arquivo SCSS.
 - Melhorias de responsividade.
+- Inclusão de checkbox para concluir e reabrir tarefas.
+- Atualização do `TaskService` para utilizar `PATCH /tasks/{task}`.
+
+## Docker
+
+- Atualização da imagem Node do frontend para compatibilidade com Angular 21.
+- Substituição de `npm install` por `npm ci` no Dockerfile do frontend.
 
 ---
 
@@ -79,17 +91,30 @@ Avaliar sua capacidade de:
 Durante a refatoração foram adotadas algumas decisões para preservar o comportamento original da aplicação:
 
 - O endpoint `/tarefas` foi mantido para evitar alterações no contrato da API.
+- O endpoint REST `PATCH /tasks/{task}` foi adicionado para atualização do status da tarefa.
 - Foi utilizada a arquitetura padrão do Laravel com Eloquent.
 - Não foram adicionadas camadas Service/Repository por não agregarem valor ao escopo atual do CRUD.
 - O frontend passou a consumir a URL da API através dos environments.
 - O arquivo `storage/tarefas.json` foi removido, sendo substituído por um Seeder.
 - As três tarefas iniciais foram preservadas, incluindo `Tarefa 2` com `completed = true`.
+- A interface só altera o status visual de uma tarefa após confirmação da API.
+
+---
+
+# Requisitos
+
+- PHP 8.2 ou superior.
+- Composer.
+- Laravel 12.
+- Node.js compatível com Angular 21. O Dockerfile do frontend utiliza Node 20.20.2.
+- Angular 21.
+- Docker e Docker Compose, caso a execução seja feita por containers.
 
 ---
 
 # Backend
 
-O backend utiliza Laravel 11, PHP 8.2 e SQLite.
+O backend utiliza Laravel 12, PHP 8.2+ e SQLite.
 
 ## Configuração
 
@@ -129,6 +154,38 @@ php artisan serve
 
 ---
 
+## Execução com Docker
+
+Na raiz do projeto:
+
+```bash
+docker compose up --build
+```
+
+Serviços expostos:
+
+- Backend Laravel: `http://localhost:8000`
+- Frontend Angular: `http://localhost:4200`
+
+Para executar comandos do backend dentro do container:
+
+```bash
+docker compose exec laravel php artisan migrate --seed
+docker compose exec laravel php artisan test
+docker compose exec laravel php artisan route:list
+```
+
+---
+
+## Funcionalidades disponíveis
+
+- Listar tarefas.
+- Criar tarefas.
+- Excluir tarefas.
+- Concluir e reabrir tarefas.
+
+---
+
 ## Endpoints
 
 | Método | Endpoint | Descrição |
@@ -136,6 +193,7 @@ php artisan serve
 | GET | `/tarefas` | Lista tarefas |
 | POST | `/tarefas` | Cria tarefa |
 | DELETE | `/tarefas/{id}` | Remove tarefa |
+| PATCH | `/tasks/{task}` | Atualiza o status `completed` da tarefa |
 
 ---
 
@@ -143,9 +201,12 @@ php artisan serve
 
 - `title` obrigatório.
 - Máximo de 255 caracteres.
+- `PATCH /tasks/{task}` permite atualizar apenas `completed`.
+- `completed` é obrigatório e booleano no payload de atualização.
 - POST retorna **201 Created**.
 - DELETE retorna **204 No Content**.
 - DELETE retorna **404** quando a tarefa não existe.
+- PATCH retorna a tarefa atualizada.
 
 ---
 
@@ -168,7 +229,9 @@ Os testes utilizam SQLite em memória e cobrem:
 - limite de caracteres;
 - remoção;
 - erro 404;
-- funcionamento do Seeder.
+- funcionamento do Seeder;
+- conclusão e reabertura de tarefas;
+- validação de payload inválido ao atualizar `completed`.
 
 ---
 
@@ -193,6 +256,47 @@ Os estilos foram movidos para `app.component.scss`, mantendo a identidade visual
 
 O tratamento de erros foi ajustado para preservar o estado da interface quando ocorrerem falhas na comunicação com o backend.
 
+O checkbox de cada tarefa permite concluir e reabrir tarefas. A lista é atualizada somente após resposta bem-sucedida da API.
+
+Executar localmente:
+
+```bash
+cd frontend
+npm ci
+npm run start
+```
+
+Gerar build:
+
+```bash
+cd frontend
+npm run build
+```
+
+---
+
+# Estrutura resumida
+
+```text
+backend/
+  app/Http/Controllers/TaskController.php
+  app/Http/Requests/StoreTaskRequest.php
+  app/Http/Requests/UpdateTaskRequest.php
+  app/Models/Task.php
+  database/migrations/
+  database/seeders/TaskSeeder.php
+  routes/api.php
+  tests/Feature/
+
+frontend/
+  src/app/app.component.*
+  src/app/task.ts
+  src/app/task.service.ts
+  src/environments/
+
+docker-compose.yml
+```
+
 ---
 
 # Observações
@@ -201,5 +305,6 @@ O tratamento de erros foi ajustado para preservar o estado da interface quando o
 - Os dados iniciais são recriados automaticamente pelo `TaskSeeder`.
 - O Seeder utiliza `updateOrCreate`, permitindo múltiplas execuções sem duplicação de registros.
 - Novas tarefas continuam sendo criadas com `completed = false`.
+- O status `completed` pode ser alterado pelo endpoint `PATCH /tasks/{task}` e pelo checkbox no frontend.
 - As respostas da API são retornadas pelo Eloquent incluindo `created_at` e `updated_at`.
-- O modelo e a tabela seguem a convenção do Laravel (Task → tasks), enquanto os endpoints permaneceram em português (/tarefas) para manter compatibilidade com o frontend existente e evitar mudanças desnecessárias na API.
+- O modelo e a tabela seguem a convenção do Laravel (Task → tasks). Os endpoints originais permaneceram em português (`/tarefas`) para manter compatibilidade, e o novo endpoint de atualização segue a convenção REST solicitada (`/tasks/{task}`).
