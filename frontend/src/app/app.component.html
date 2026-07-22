@@ -2,49 +2,53 @@
   <h1>{{ title }}</h1>
 
   <div class="todo-form">
-    <input 
-      type="text" 
-      [(ngModel)]="newTodo.title" 
+    <input
+      type="text"
+      [(ngModel)]="newTodo.title"
       placeholder="Digite uma nova tarefa"
       class="todo-input"
-    />
-    <button 
-      (click)="addTodo()" 
-      class="add-button"
-    >
-      Adicionar
-    </button>
-  </div>
-
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
-
-  <div class="todo-section">
-    <h2>Tarefas</h2>
-    
-    <div *ngIf="todos.length === 0" class="empty-message">
-      Nenhuma tarefa encontrada.
-    </div>
-    
-    <ul class="todo-list">
-      <li 
-        *ngFor="let todo of todos" 
-        class="todo-item"
-      >
-        <span class="todo-title" [class.todo-title--completed]="todo.completed">
-          {{ todo.title }}
-        </span>
-        
-        <button 
-          (click)="removeTodo(todo.id)" 
-          class="remove-button"
+      />
+      <button
+        (click)="addTodo()"
+        class="add-button"
         >
-          Remover
-        </button>
-      </li>
-    </ul>
-  </div>
-</div>
+        Adicionar
+      </button>
+    </div>
 
-<router-outlet />
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <div class="todo-section">
+      <h2>Tarefas</h2>
+
+      @if (todos.length === 0) {
+        <div class="empty-message">
+          Nenhuma tarefa encontrada.
+        </div>
+      }
+
+      <ul class="todo-list">
+        @for (todo of todos; track todo) {
+          <li
+            class="todo-item"
+            >
+            <span class="todo-title" [class.todo-title--completed]="todo.completed">
+              {{ todo.title }}
+            </span>
+            <button
+              (click)="removeTodo(todo.id)"
+              class="remove-button"
+              >
+              Remover
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <router-outlet />
