@@ -79,6 +79,7 @@ Avaliar sua capacidade de:
 - Inclusão de checkbox para concluir e reabrir tarefas.
 - Atualização do `TaskService` para utilizar `PATCH /tasks/{task}`.
 - Componentização da interface em `TaskFormComponent`, `TaskListComponent` e `TaskItemComponent`.
+- Inclusão de testes unitários para componentes e `TaskService`.
 
 ## Docker
 
@@ -314,6 +315,7 @@ frontend/
   src/app/task-form.component.*
   src/app/task-list.component.*
   src/app/task-item.component.*
+  src/app/*.spec.ts
   src/app/task.ts
   src/app/task.service.ts
   src/environments/
