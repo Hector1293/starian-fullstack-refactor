@@ -117,4 +117,75 @@ class TaskApiTest extends TestCase
                 'message' => 'Tarefa nao encontrada.',
             ]);
     }
+
+    public function test_mark_task_as_completed(): void
+    {
+        $task = Task::create([
+            'title' => 'Tarefa para concluir',
+            'completed' => false,
+        ]);
+
+        $response = $this->patchJson("/tasks/{$task->id}", [
+            'completed' => true,
+        ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $task->id,
+                'title' => 'Tarefa para concluir',
+                'completed' => true,
+            ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'completed' => true,
+        ]);
+    }
+
+    public function test_mark_task_as_not_completed(): void
+    {
+        $task = Task::create([
+            'title' => 'Tarefa para desmarcar',
+            'completed' => true,
+        ]);
+
+        $response = $this->patchJson("/tasks/{$task->id}", [
+            'completed' => false,
+        ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $task->id,
+                'title' => 'Tarefa para desmarcar',
+                'completed' => false,
+            ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'completed' => false,
+        ]);
+    }
+
+    public function test_reject_invalid_completed_payload(): void
+    {
+        $task = Task::create([
+            'title' => 'Tarefa com payload invalido',
+            'completed' => false,
+        ]);
+
+        $response = $this->patchJson("/tasks/{$task->id}", [
+            'completed' => 'invalid',
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['completed']);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'completed' => false,
+        ]);
+    }
 }

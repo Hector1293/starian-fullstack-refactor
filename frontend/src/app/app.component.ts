@@ -63,4 +63,19 @@ export class AppComponent implements OnInit {
       }
     );
   }
+
+  toggleCompleted(task: Task, event: MouseEvent): void {
+    event.preventDefault();
+
+    this.taskService.updateTaskCompleted(task.id, !task.completed).subscribe(
+      (updatedTask: Task) => {
+        this.todos = this.todos.map(todo => todo.id === updatedTask.id ? updatedTask : todo);
+        this.errorMessage = '';
+      },
+      (erro: HttpErrorResponse) => {
+        console.error('Erro ao atualizar tarefa:', erro);
+        this.errorMessage = 'Nao foi possivel atualizar a tarefa.';
+      }
+    );
+  }
 }

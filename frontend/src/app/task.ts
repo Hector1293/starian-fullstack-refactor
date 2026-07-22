@@ -9,3 +9,5 @@ export interface Task {
 export type NewTask = Pick<Task, 'title' | 'completed'>;
 
 export type CreateTaskPayload = Pick<Task, 'title'>;
+
+export type UpdateTaskPayload = Pick<Task, 'completed'>;

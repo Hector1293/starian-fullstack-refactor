@@ -62,6 +62,18 @@
   border: 1px solid #ddd;
 }
 
+.todo-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.todo-checkbox {
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
 .todo-title {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -89,6 +101,10 @@
   .todo-item {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .todo-content {
+    align-items: flex-start;
   }
 
   .remove-button {

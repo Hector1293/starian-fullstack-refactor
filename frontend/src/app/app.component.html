@@ -36,9 +36,17 @@
           <li
             class="todo-item"
             >
-            <span class="todo-title" [class.todo-title--completed]="todo.completed">
-              {{ todo.title }}
-            </span>
+            <label class="todo-content">
+              <input
+                type="checkbox"
+                class="todo-checkbox"
+                [checked]="todo.completed"
+                (click)="toggleCompleted(todo, $event)"
+                />
+              <span class="todo-title" [class.todo-title--completed]="todo.completed">
+                {{ todo.title }}
+              </span>
+            </label>
             <button
               (click)="removeTodo(todo.id)"
               class="remove-button"
