@@ -288,6 +288,21 @@ npm ci
 npm run start
 ```
 
+Executar testes unitários:
+
+```bash
+cd frontend
+npm test -- --watch=false --browsers=ChromeHeadlessNoSandbox
+```
+
+Os testes cobrem:
+
+- `AppComponent`: carregamento, criação, remoção, atualização de status e tratamento de erros.
+- `TaskFormComponent`: renderização, emissão de criação e bloqueio de título vazio.
+- `TaskListComponent`: renderização da lista, mensagem para lista vazia e repasse de eventos.
+- `TaskItemComponent`: título, estado concluído, checkbox e remoção.
+- `TaskService`: chamadas HTTP `GET`, `POST`, `PATCH` e `DELETE`, incluindo URL, método e payload.
+
 Gerar build:
 
 ```bash
