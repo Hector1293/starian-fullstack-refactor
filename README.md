@@ -86,6 +86,10 @@ Avaliar sua capacidade de:
 - Atualização da imagem Node do frontend para compatibilidade com Angular 21.
 - Substituição de `npm install` por `npm ci` no Dockerfile do frontend.
 
+## Integração Contínua
+
+- Criação de pipeline com GitHub Actions para validar backend e frontend em pushes e pull requests.
+
 ---
 
 # Decisões técnicas
@@ -312,6 +316,23 @@ npm run build
 
 ---
 
+# Integração Contínua
+
+O projeto utiliza GitHub Actions para executar validações automáticas em pushes e pull requests para a branch principal.
+
+A pipeline está definida em:
+
+```text
+.github/workflows/ci.yml
+```
+
+Jobs configurados:
+
+- `backend`: instala as dependências com Composer, prepara o ambiente Laravel e executa os testes automatizados com `php artisan test`.
+- `frontend`: instala as dependências com `npm ci`, executa os testes unitários em modo headless e executa o build da aplicação com `npm run build`.
+
+---
+
 # Estrutura resumida
 
 ```text
@@ -334,6 +355,9 @@ frontend/
   src/app/task.ts
   src/app/task.service.ts
   src/environments/
+
+.github/
+  workflows/ci.yml
 
 docker-compose.yml
 ```
